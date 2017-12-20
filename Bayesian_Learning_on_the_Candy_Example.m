@@ -19,6 +19,12 @@ for i = 0:num_candy_drawn
     p_h_d(i+1,:) = (p_h.*p_d_h)'/p_d;
 end
 
+%% Prediction
+p_next_is_lime = zeros(num_candy_drawn,1);
+for i = 0:num_candy_drawn
+    p_next_is_lime(i+1) = p_lime'*p_h_d(i+1,:)';
+end
+
 %% Plot
 figure
 ftsize = 20;
@@ -26,8 +32,20 @@ plot(0:10,p_h_d,'LineWidth',2);
 set(gca,'fontsize',ftsize);
 grid on;
 title('Bayesian updating for the candy bag example','FontSize',ftsize)
-xlabel('# of samples in d','FontSize',ftsize);
+xlabel(['\# of samples in ','$\mathbf{d}$'],'FontSize',ftsize,...
+    'interpreter', 'latex');
 ylabel('Posterior probability of hypothesis','FontSize',ftsize)
 leg1 = legend('$P(h_1|d)$','$P(h_2|d)$','$P(h_3|d)$','$P(h_4|d)$',...
     '$P(h_5|d)$');
 set(leg1,'Interpreter','latex','FontSize',ftsize);
+
+figure
+plot(0:10,p_next_is_lime,'LineWidth',2);
+set(gca,'fontsize',ftsize);
+grid on;
+title('Bayesian prediction','FontSize',ftsize)
+xlabel(['\# of samples in ','$\mathbf{d}$'],'FontSize',ftsize,...
+    'interpreter', 'latex');
+ylabel(['$P($','next candy is lime','$|\mathbf{d})$'],'FontSize',ftsize,...
+    'interpreter', 'latex')
+
