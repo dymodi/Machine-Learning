@@ -1,0 +1,9 @@
+# Ignore some files
+
+# Files to be ignored
+.DS_Store
+
+# Temp data
+MNIST_data
+
+# Files made by MATLAB
