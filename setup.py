@@ -1,20 +1,14 @@
-import setuptools
+from setuptools import setup
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
-
-setuptools.setup(
-    name="ml_pkg",
+setup(
+    name="pipicat",
     version="0.0.1",
+    description="A small machine learning lib",
     author="Yi",
     author_email="dymodi@gmail.com",
-    description="A small example package",
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
-    packages=setuptools.find_packages(),
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-    ],
-)
+    url="https://github.com/dymodi/machine_learning",
+    packages=['ml'],
+    license='MIT',
+    zip_safe=False
+    )
