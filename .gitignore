@@ -11,3 +11,7 @@ MNIST_data
 
 # Module file
 *.pyc
+
+# Develope files
+.idea/
+.cache/

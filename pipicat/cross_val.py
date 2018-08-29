@@ -1,6 +1,7 @@
 # This is a function for k-fold cross-validation on (X; y)
 # Yi Ding
 
+import numpy as np
 
 # This function return the accuracy score of the prediction for classification
 def my_accuracy_score_classification(ytrue,ypred):
