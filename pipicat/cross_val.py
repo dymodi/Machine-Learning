@@ -3,20 +3,25 @@
 
 import numpy as np
 
+
 # This function return the accuracy score of the prediction for classification
-def my_accuracy_score_classification(ytrue,ypred):
+def my_accuracy_score_classification(ytrue, ypred, metric):
     ytrue = np.array(ytrue)
     ypred = np.array(ypred)
     if ytrue.shape[0] != ypred.shape[0]:
         raise Exception('ERROR: ytrue and ypred not same length!')
-    accuracy_score = 0;
+    accuracy_score = 0
     for i in range(0,ytrue.shape[0]):
         if ytrue[i] == ypred[i]:
-            accuracy_score = accuracy_score + 1;
-    return (float(accuracy_score)/float(ytrue.shape[0]))
+            accuracy_score = accuracy_score + 1
+    if metric == 'accuracy':
+        return float(accuracy_score)/float(ytrue.shape[0])
+    else:
+        raise Exception('No that metric')
+
 
 # This function return the accuracy score of the prediction for regression
-def my_accuracy_score_regression(ytrue,ypred):
+def my_accuracy_score_regression(ytrue, ypred, metric='mae'):
     ytrue = np.array(ytrue)
     ypred = np.array(ypred)
     if ytrue.shape[0] != ypred.shape[0]:
@@ -25,16 +30,28 @@ def my_accuracy_score_regression(ytrue,ypred):
     y_bar = np.mean(ytrue)
     sum_hat_sqr = 0
     sum_bar_sqr = 0
+    sum_abs_err = 0
     for i in range(0,ytrue.shape[0]):
         sum_hat_sqr = sum_hat_sqr + (ytrue[i]-ypred[i])*(ytrue[i]-ypred[i])
         sum_bar_sqr = sum_bar_sqr + (ytrue[i]-y_bar)*(ytrue[i]-y_bar)
-    R_sqr = 1 - sum_hat_sqr/sum_bar_sqr
-    return R_sqr
+        sum_abs_err = sum_abs_err + np.abs(ytrue[i]-ypred[i])
+    r_sqr = 1 - sum_hat_sqr/sum_bar_sqr
+    mse = sum_hat_sqr/ytrue.shape[0]
+    mae = sum_abs_err/ytrue.shape[0]
+    if metric == 'mae':
+        return mae
+    elif metric == 'mse':
+        return mse
+    elif metric == 'r_square':
+        return r_sqr
+    else:
+        raise Exception('No that metric')
+
 
 # Main function
 # ml_type = 0 means classification
 # ml_type = 1 means regression
-def my_cross_val(method,X,y,k,ml_type):    
+def my_cross_val(method, X, y, k, ml_type='classification', metric = 'accuracy'):
     X = np.array(X)
     y = np.array(y)
     y = np.reshape(y,(X.shape[0],1))    
@@ -43,7 +60,7 @@ def my_cross_val(method,X,y,k,ml_type):
     # Permute the indices randomly
     rndInd = np.random.permutation(y.size)
     # Start and end index of test set
-    sttInd = 0;
+    sttInd = 0
     endInd = (np.array(y.size/k).astype(int))
     indLen = (np.array(y.size/k).astype(int))
     for i in range(0, k):
@@ -55,7 +72,8 @@ def my_cross_val(method,X,y,k,ml_type):
         sttInd = endInd
         endInd = endInd + indLen
         # Create the model
-        myMethod = method()    
+        # myMethod = method()
+        myMethod = method   # Directly passing the model
         # Fit the data
         myMethod.fit(Xtrain,ytrain.ravel())
         # Test the model on (new) data
@@ -63,11 +81,10 @@ def my_cross_val(method,X,y,k,ml_type):
         #print("ytest:",ytest)
         #print("ypred:",ypred)
         # Save error rate
-        if ml_type == 0:
-            errRat[i] = 1 - my_accuracy_score_classification(ytest, ypred)
-        elif ml_type == 1:
-            errRat[i] = my_accuracy_score_regression(ytest, ypred)
+        if ml_type == 'classification':
+            errRat[i] = 1 - my_accuracy_score_classification(ytest, ypred, metric)
+        elif ml_type == 'regression':
+            errRat[i] = my_accuracy_score_regression(ytest, ypred, metric)
         else:
             raise Exception('Invalid ml_type!')
-            
     return errRat
