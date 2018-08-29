@@ -8,3 +8,6 @@ MNIST_data
 
 # Files made by MATLAB
 *.gz
+
+# Module file
+*.pyc
